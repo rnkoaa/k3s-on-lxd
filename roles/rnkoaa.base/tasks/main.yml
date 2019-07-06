@@ -1,0 +1,31 @@
+---
+# - name: Add the OS specific variables
+#   include_vars: "{{ ansible_os_family }}.yml"
+- name: Ensure Hosts File
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ item.ip }}    {{ item.name }}     {{ item.fqdn }}"
+  with_items: "{{ all_nodes }}"
+
+- name: "Set timezone to {{ default_timezone }}"
+  timezone:
+    name: "{{ default_timezone }}"
+  become: true
+
+# Do os specific initialization
+- name: Import Tasks to Run
+  include_tasks: "{{ ansible_os_family}}.yml"
+
+- name: Install python pip utilities
+  apt:
+    name:
+      - 'python-pip'
+      - 'python3-pip'
+    state: present
+  become: true
+
+# # upgrade pip to the latest version
+# - pip:
+#     name: pip
+#     # name: pip
+#     extra_args: --upgrade

@@ -1,0 +1,58 @@
+# https://github.com/rancher/k3s/releases/download/v0.5.0/sha256sum-amd64.txt
+- name: Check k3s package checksum file
+  stat:
+    path: "{{ role_path }}/files/k3s_{{ k3s_version }}_SHA256SUMS"
+  become: false
+  run_once: true
+  tags: installation
+  register: k3s_checksum
+  delegate_to: 127.0.0.1
+
+- name: Get k3s package checksum file
+  get_url:
+    url: "{{ k3s_x86_64_checksum_file_url }}"
+    dest: "{{ k3s_checksum_dest }}"
+  become: false
+  run_once: true
+  tags: installation
+  # when: not k3s_checksum.stat.exists
+  when: ( ansible_facts.architecture == "x86_64" and k3s_checksum.stat.exists == False )
+  delegate_to: 127.0.0.1
+
+- name: Get k3s package checksum
+  shell: |
+    set -o pipefail
+    grep -v 'k3s-' "{{ k3s_checksum_dest }}" | grep 'k3s' | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  become: false
+  register: k3s_sha256
+  tags: installation
+  delegate_to: 127.0.0.1
+
+- name: Check k3s package file
+  stat:
+    path: "{{ role_path }}/files/{{ k3s_pkg }}"
+  become: false
+  register: k3s_package
+  delegate_to: 127.0.0.1
+
+- name: Download k3s
+  get_url:
+    url: "{{ k3s_bin_url }}"
+    dest: "{{ role_path }}/files/{{ k3s_pkg }}"
+    checksum: "sha256:{{ k3s_sha256.stdout }}"
+    timeout: "42"
+  become: false
+  tags: installation
+  delegate_to: 127.0.0.1
+  when: not k3s_package.stat.exists
+
+- name: Install k3s
+  copy:
+    src: "{{ role_path }}/files/{{ k3s_pkg }}"
+    dest: "{{ k3s_bin_pkg }}"
+    owner: "{{ k3s_user }}"
+    group: "{{ k3s_group }}"
+    mode: 0755
+  tags: installation

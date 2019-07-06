@@ -1,0 +1,16 @@
+[Unit]
+Description=Lightweight Kubernetes
+Documentation=https://k3s.io
+After=network-online.target
+[Service]
+ExecStartPre=-/sbin/modprobe br_netfilter
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/local/bin/k3s server {{ '--no-flannel' if not k3s_flannel_deploy|bool }} {{ '--flannel-iface '+ k3s_flannel_iface if k3s_flannel_iface is defined}} {{ '--no-deploy traefik' if not k3s_traefik_deploy|bool}} --node-ip={{ public_host_ipv4 }}
+KillMode=process
+Delegate=yes
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+[Install]
+WantedBy=multi-user.target

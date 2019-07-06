@@ -1,0 +1,10 @@
+---
+- hosts: "{{ m_host | default('kmachine') }}"
+  become: yes
+  
+  roles:
+    - geerlingguy.ntp
+    - rnkoaa.base
+    # - rnkoaa.lockdown
+  # tasks:
+

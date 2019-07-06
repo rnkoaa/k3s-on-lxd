@@ -1,0 +1,15 @@
+---
+- hosts: "{{ m_host | default('kmachine') }}"
+  become: yes
+
+  tasks:
+    - name: Copy file with owner and permissions
+      copy:
+        src: "{{ item }}" 
+        dest: "/home/vagrant/.ssh/{{ item }}" 
+        owner: vagrant 
+        group: vagrant
+        mode: '0400' 
+      loop:
+        - ../.ssh/vagrant_id_rsa
+        - ../.ssh/vagrant_id_rsa.pub

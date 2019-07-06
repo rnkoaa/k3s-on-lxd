@@ -1,0 +1,30 @@
+---
+# Do os specific initialization
+- name: "download k3s binaries"
+  include_tasks: install.yml
+
+- name: Ensure that the /opt/cni/bin directory exists
+  file:
+    path: /opt/cni/bin
+    state: directory
+    owner: root
+    group: root
+  
+- name: Copy coredns plugings to /opt/cni/bin
+  copy:
+    src: "{{ role_path }}/files/cni-plugins/"
+    dest: /opt/cni/bin
+    owner: root
+    group: root
+    mode: 0755
+    
+- name: Import master tasks to run on the master worker
+  include_tasks: master.yml
+  when: hostvars[inventory_hostname]['k3s_cluster_role']|lower == 'master'
+  tags:
+    - k3s_master
+
+- name: Import worker tasks to run on the worker nodes
+  include_tasks: worker.yml
+  when: hostvars[inventory_hostname]['k3s_cluster_role']|lower == 'worker'
+  tags: k3s_worker

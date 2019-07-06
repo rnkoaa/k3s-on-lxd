@@ -1,0 +1,16 @@
+---
+# tasks file for rnkoaa.base
+
+# Example removing a repository and cleaning up metadata cache
+
+- name: Install Extra release repos
+  yum:
+    name: 'epel-release'
+    state: latest
+  become: true
+
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: present
+  become: true

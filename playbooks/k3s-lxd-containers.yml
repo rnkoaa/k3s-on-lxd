@@ -1,0 +1,28 @@
+---
+- hosts: "{{ m_host | default('kmachine') }}"
+  become: yes
+  vars:
+     vagrant_public_key: "{{ lookup('file', '../.ssh/vagrant_id_rsa.pub') }}"
+
+  tasks:
+    - name: Create k3s containers using the previously created k3s profile
+      lxd_container:
+        state: started
+        name: "{{ item }}"
+        source:
+          type: image
+          mode: pull
+          server: https://images.linuxcontainers.org
+          protocol: lxd # if you get a 404, try setting protocol: simplestreams
+          alias: ubuntu/xenial/amd64
+        profiles: ["k3s"]
+        wait_for_ipv4_addresses: true
+        timeout: 600
+      register: out
+      loop:
+        - k3s-master
+        - k3s-worker
+
+    - debug:
+        msg: "{{out.item.name}} {{ out.item.addresses }}"
+      loop: "{{out.results}}"

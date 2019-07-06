@@ -1,0 +1,66 @@
+---
+- name: Copy master K3s service file
+  register: k3s_service
+  template:
+    src: 'k3s.master.service.j2'
+    dest: '{{ systemd_dir }}/k3s.service'
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Enable and check K3s service
+  systemd:
+    name: k3s
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
+# - name: copy and let k3s deploy flannel 
+#   register: k3s_service
+#   template:
+#     src: 'k3s.flannel.yaml.j2'
+#     dest: '/tmp/flannel.yaml'
+#     owner: root
+#     group: root
+#     mode: 0755
+
+# - name: Deploy flannel by running k3s kubectl
+#   shell: k3s kubectl apply -f /tmp/flannel.yaml
+
+- name: Wait until the file node-token to be present before continuing
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+
+- name: Read node-token from master
+  stat:
+    path: /var/lib/rancher/k3s/server/node-token
+  register: node_token_check
+
+- name: Change file access node-token
+  file:
+    path: /var/lib/rancher/k3s/server
+    mode: "g+rx,o+rx"
+  when: node_token_check.stat.exists and hostvars[inventory_hostname]['k3s_cluster_role'] == 'master'
+
+- name: Copy the node-token to the role directory for the agents
+  fetch:
+    src: /var/lib/rancher/k3s/server/node-token
+    dest: "{{ role_path }}/files/master-token"
+    flat: yes
+
+- name: Restore node-token file access
+  file:
+    path: /var/lib/rancher/k3s/server
+    mode: "{{ node_token_check.stat.mode }}"
+  when: node_token_check.stat.exists and hostvars[inventory_hostname]['k3s_cluster_role'] == 'master'
+
+- name: copy and let k3s deploy flannel 
+  register: k3s_service
+  template:
+    src: 'k3s.flannel.yaml.j2'
+    dest: '/var/lib/rancher/k3s/server/manifests/flannel.yaml'
+    owner: root
+    group: root
+    mode: 0755
+
+

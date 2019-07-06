@@ -1,0 +1,26 @@
+---
+- hosts: "{{ m_host | default('kmachine') }}"
+  become: yes
+  vars:
+     vagrant_public_key: "{{ lookup('file', '../.ssh/vagrant_id_rsa.pub') }}"
+
+  tasks:
+    - name: Create k3s profile for creating lxd containers
+      lxd_profile:
+        state: present
+        name: k3s
+        config:
+          user.user-data: |
+            #cloud-config
+            ssh_authorized_keys: "{{ vagrant_public_key }}"
+        description: k3s profile for creating k3s containers
+        devices:
+          eth0:
+            name: eth0
+            nictype: bridged
+            parent: br0
+            type: nic
+          root:
+            path: /
+            pool: k3s
+            type: disk

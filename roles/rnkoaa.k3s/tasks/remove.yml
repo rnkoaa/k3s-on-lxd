@@ -1,0 +1,127 @@
+---
+- name: Check if k3s Service Exists
+  stat:
+    path: /etc/systemd/system/k3s.service
+  register: k3s_service_status
+
+- name: Remove k3s server if running
+  service:
+    name: k3s
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+  when: k3s_service_status.stat.exists
+
+- name: just force systemd to reread configs (2.4 and above)
+  systemd:
+    daemon_reload: yes
+
+- name: k3s service procs exist
+  stat:
+    path: /sys/fs/cgroup/systemd/system.slice/k3s.service/cgroup.procs
+  register: cgroup_procs_file
+
+- name: Remove k3s service file
+  file:
+    path: /etc/systemd/system/k3s.service
+    state: absent
+
+- name: Remove k3s service file
+  file:
+    path: /usr/local/bin/k3s
+    state: absent
+
+- name: Check if kubectl Exists
+  stat:
+    path: /usr/local/bin/kubectl
+  register: kubectl_status
+
+- name: Remove kubectl service file
+  file:
+    path: /usr/local/bin/kubectl
+    state: absent
+  when: kubectl_status.stat.exists
+
+- name: Check if crictl Exists
+  stat:
+    path: /usr/local/bin/crictl
+  register: crictl_status
+
+- name: Remove crictl service file
+  file:
+    path: /usr/local/bin/crictl
+    state: absent
+  when: crictl_status.stat.exists
+
+# - name: Get running processes
+#   shell: "ps -ef | grep -v grep | grep -w {{ PROCESS }} | awk '{print $2}'"
+#   register: running_processes
+- name: k3s service procs exist
+  stat:
+    path: /sys/fs/cgroup/systemd/system.slice/k3s.service/cgroup.procs
+  register: cgroup_procs_file
+
+- name: Kill running processes
+  shell: "kill -9 `cat /sys/fs/cgroup/systemd/system.slice/k3s.service/cgroup.procs`"
+  when: cgroup_procs_file.stat.exists
+
+
+# - name: Check if k3s file Exists
+#   stat:
+#     path: /run/k3s
+#   register: run_k3s_file_status
+
+# - name: "unmount - 1"
+#   shell: umount `cat /proc/self/mounts | awk '{print $2}' | grep '^/run/k3s'`
+#   when: run_k3s_file_status.stat.exists
+
+- name: Check if k3s file Exists
+  stat:
+    path: /var/lib/rancher/k3s
+  register: k3s_file_status
+
+- name: "unmount - 2"
+  shell: unmount `cat /proc/self/mounts | awk '{print $2}' | grep '^/var/lib/rancher/k3s'`
+  when: k3s_file_status.stat.exists
+
+# - name: Remove k3s service file
+#   file:
+#     path: /var/lib/rancher/k3s
+#     state: absent
+
+# - name: Remove k3s service file
+#   file:
+#     path: /etc/rancher/k3s
+#     state: absent
+  # with_items: "{{ running_processes.stdout_lines }}"
+
+# - wait_for:
+#     path: "/proc/{{ item }}/status"
+#     state: absent
+#   with_items: "{{ running_processes.stdout_lines }}"
+#   ignore_errors: yes
+#   register: killed_processes
+
+# - name: Force kill stuck processes
+#   shell: "kill -9 {{ item }}"
+#   with_items: "{{ killed_processes.results | select('failed') | map(attribute='item')
+
+
+
+
+- name: Remove kubectl service file
+  file:
+    path: /var/lib/rancher/k3s
+    state: absent
+  when: k3s_file_status.stat.exists
+
+- name: Check if k3s config file Exists
+  stat:
+    path: /etc/rancher/k3s
+  register: k3s_file_status
+
+- name: Remove k3s config file
+  file:
+    path: /etc/rancher/k3s
+    state: absent
+  when: k3s_file_status.stat.exists

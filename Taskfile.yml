@@ -1,0 +1,76 @@
+# https://taskfile.dev
+
+version: '2'
+
+vars:
+  INVENTORY: hosts.yml
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  install-vagrant-plugins:
+    desc: Install Vagrant plugins
+    cmds:
+      - vagrant plugin install vagrant-scp
+
+  generate-jump-keys:
+    desc: Generate SSH keys for the vagrant user which will be used to connect to lxd containers in the vagrant host
+    silent: true
+    cmds:
+      - echo 'Generating ssh keys'
+      - mkdir -p .ssh
+      - ssh-keygen -t rsa -b 4096 -C "vagrant@vagrant.com" -N "" -f .ssh/vagrant_id_rsa
+
+  copy-ssh-jump-keys:
+    desc: Generate SSH keys for key based authentication
+    silent: true
+    cmds:
+      - echo 'copying jump keys to vagrant server'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/private-keys.yml
+
+  prepare-lxd-users:
+    desc: Add vagrant user to the lxd group
+    silent: true
+    cmds:
+      - echo 'copying jump keys to vagrant server'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/prepare-lxd-users.yml
+
+  k3s-lxd-containers:
+    desc: Create k3s lxd profile on the host
+    silent: true
+    cmds:
+      - echo 'creating the k3s lxd profile on the host'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/k3s-lxd-containers.yml
+
+  k3s-lxd-profile:
+    desc: Create k3s lxd profile on the host
+    silent: true
+    cmds:
+      - echo 'creating the k3s lxd profile on the host'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/k3s-lxd-profile.yml
+
+  base:
+    desc: Generate SSH keys for key based authentication
+    silent: true
+    cmds:
+      - echo 'copying jump keys to vagrant server'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/prepare-lxd.yml
+      # - vagrant scp .ssh/vagrant_id_rsa default:/home/vagrant/.ssh/id_rsa
+      # - vagrant scp .ssh/vagrant_id_rsa.pub default:/home/vagrant/.ssh/id_rsa.pub
+
+  generate-ssh-keys:
+    desc: Generate SSH keys for key based authentication
+    silent: true
+    cmds:
+      - echo 'Generating ssh keys'
+      - mkdir -p .ssh
+      - ssh-keygen -t rsa -b 4096 -C "vagrant@vagrant.com" -N "" -f .ssh/id_rsa
+
+  ansible-test:
+    silent: true
+    cmds:
+      - echo "Testing Ansible connection"
+      - ansible -i {{.INVENTORY}} all -m ping

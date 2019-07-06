@@ -1,0 +1,32 @@
+config:
+  core.https_address: '[::]:8443'
+  core.trust_password: Admin2193$
+networks:
+- config:
+    ipv4.address: auto
+    ipv6.address: auto
+  description: ""
+  managed: false
+  name: br0
+  type: ""
+storage_pools:
+- config:
+    size: 15GB
+  description: ""
+  name: k3s
+  driver: zfs
+profiles:
+- config: {}
+  description: ""
+  devices:
+    eth0:
+      name: eth0
+      nictype: bridged
+      parent: br0
+      type: nic
+    root:
+      path: /
+      pool: k3s
+      type: disk
+  name: default
+cluster: null

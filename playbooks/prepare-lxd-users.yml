@@ -1,0 +1,10 @@
+---
+- hosts: "{{ m_host | default('kmachine') }}"
+  become: yes
+
+  tasks:
+  - name: Add vagrant user to lxd
+    user:
+      name: "{{ ansible_user }}"
+      groups: lxd
+      append: yes

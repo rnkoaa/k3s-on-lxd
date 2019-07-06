@@ -1,0 +1,30 @@
+---
+- name: Read node-token from master
+  stat:
+    path: files/master-token
+  register: master_token_check
+
+- name: "read the master token and set it as fact"
+  set_fact:
+    cluster_token: "{{ lookup('file', 'files/master-token')}}"
+  tags: k3s_worker
+#   when: master_token_check.stat.exists
+
+- debug:
+    msg: "cluster token: {{ cluster_token}}"
+  tags: k3s_worker
+
+- name: Copy K3s service file
+  template:
+    src: "k3s.worker.service.j2"
+    dest: "{{ systemd_dir }}/k3s.service"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Enable and check K3s service
+  systemd:
+    name: k3s
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
