@@ -3,8 +3,8 @@
   become: yes
   
   roles:
-    - geerlingguy.ntp
     - rnkoaa.base
+    - geerlingguy.ntp
     # - rnkoaa.lockdown
   # tasks:
 

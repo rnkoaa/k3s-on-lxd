@@ -18,3 +18,7 @@
 
 * Create the k3s lxd profile using the command below
     * `task k3s-lxd-container.yml`
+
+On Control host add this command
+    
+    lxc remote add vagrant 192.168.33.10

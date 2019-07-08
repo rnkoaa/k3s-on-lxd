@@ -23,6 +23,9 @@
         - k3s-master
         - k3s-worker
 
-    - debug:
-        msg: "{{out.item.name}} {{ out.item.addresses }}"
-      loop: "{{out.results}}"
+    - name: install python in container
+      delegate_to: "{{ item }}"
+      raw: apt-get install -y python
+      loop:
+        - k3s-master
+        - k3s-worker
