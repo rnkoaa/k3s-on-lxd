@@ -1,3 +1,6 @@
 .ssh/
 .vagrant/
 **/*.log
+
+.vault-pass
+

@@ -1,11 +1,12 @@
 - hosts: localhost
   connection: local
+  vars_files: vault.yml
   tasks:
     - name: Create a started container
       lxd_container:
-        name: container
+        name: "{{ item }}"
         url: https://192.168.33.10:8443
-        trust_password: Admin2193!
+        trust_password: "{{ lxd_password }}" 
         state: started
         source:
           type: image
@@ -16,19 +17,29 @@
         profiles: ["default"]
         wait_for_ipv4_addresses: true
         timeout: 600
+      loop:
+        - k3s-master
+        - k3s-worker
     - name: check python is installed in container
-      remote_user: root
-      delegate_to: container 
+      remote_user: k3s
+      delegate_to: "{{ item }}" 
       raw: dpkg -s python
       register: python_install_check
       failed_when: python_install_check.rc not in [0, 1]
       changed_when: false
+      loop:
+        - k3s-master
+        - k3s-worker
+
 
     - name: install python in container
-      remote_user: root
-      delegate_to: container 
+      remote_user: k3s
+      delegate_to: "{{ item }}" 
       raw: apt-get install -y python
-      when: python_install_check.rc == 1
+      # when: python_install_check.rc == 1
+      loop:
+        - k3s-master
+        - k3s-worker
   # - name: Enable LLMNR
   #
   #

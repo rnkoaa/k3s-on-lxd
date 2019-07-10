@@ -2,7 +2,7 @@
 - hosts: "{{ m_host | default('kmachine') }}"
   become: yes
   vars:
-     vagrant_public_key: "{{ lookup('file', '../.ssh/vagrant_id_rsa.pub') }}"
+     vagrant_public_key: "{{ lookup('file', './.ssh/vagrant_id_rsa.pub') }}"
 
   tasks:
     - name: Create k3s profile for creating lxd containers
