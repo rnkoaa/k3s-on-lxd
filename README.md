@@ -22,3 +22,4 @@
 On Control host add this command
     
     lxc remote add vagrant 192.168.33.10
+     lxc launch ubuntu:x --config=user.user-data="$(cat user-data.yml)"

@@ -18,19 +18,6 @@
           linux.kernel_modules: xt_conntrack,ip_tables,ip6_tables,netlink_diag,nf_nat,overlay 
           raw.lxc: "lxc.apparmor.profile=unconfined\nlxc.cap.drop= \nlxc.cgroup.devices.allow=a\nlxc.mount.auto=proc:rw
     sys:rw"
-          user.user-data: |
-            package_upgrade: true
-            packages:
-              - build-essential
-              - python
-              - software-properties-common
-            #cloud-config
-            users:
-              name: k3s
-              shell: /bin/bash
-              ssh_authorized_keys: "{{ vagrant_public_key }}"
-              groups: sudo
-              sudo: ['ALL=(ALL) NOPASSWD:ALL']
         description: k3s profile for creating k3s containers
         devices:
           eth0:

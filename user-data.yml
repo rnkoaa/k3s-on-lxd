@@ -1,0 +1,9 @@
+#cloud-config
+package_upgrade: true
+packages:
+  - python
+  - openssh-server
+users:
+  - name: root
+    ssh_authorized_keys:
+     - "@@REPLACE_ME@@"
