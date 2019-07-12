@@ -19,27 +19,29 @@
         timeout: 600
       loop:
         - k3s-master
-        - k3s-worker
+        # - k3s-worker
     - name: check python is installed in container
       remote_user: k3s
-      delegate_to: "{{ item }}" 
+      # delegate_to: "{{ item }}" 
+      delegate_to:  k3s-master
       raw: dpkg -s python
       register: python_install_check
       failed_when: python_install_check.rc not in [0, 1]
       changed_when: false
-      loop:
-        - k3s-master
-        - k3s-worker
+      # loop:
+      #   - k3s-master
+        # - k3s-worker
 
 
     - name: install python in container
       remote_user: k3s
-      delegate_to: "{{ item }}" 
+      delegate_to: k3s-master
+      # delegate_to: "{{ item }}" 
       raw: apt-get install -y python
       # when: python_install_check.rc == 1
-      loop:
-        - k3s-master
-        - k3s-worker
+      # loop:
+      #   - k3s-master
+      #   - k3s-worker
   # - name: Enable LLMNR
   #
   #

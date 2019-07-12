@@ -1,0 +1,15 @@
+- hosts:
+    - k3s-master
+  tasks:
+  - name: Update all packages to the latest version
+    apt:
+      upgrade: dist
+
+  - name: "run apt update in container" 
+    apt:
+      pkg:
+        - vim
+        - unzip
+        - openssh-server
+      update_cache: yes
+      state: latest
