@@ -37,26 +37,33 @@ tasks:
       - echo 'Adding vagrant user to lxd group'
       - ansible-playbook -i {{.INVENTORY}} playbooks/kmachine/prepare-lxd-users.yml
 
-  k3s-lxd-containers:
-    desc: Create k3s lxd profile on the host
+  create-containers:
+    desc: Create k3s lxd containers on the host
     silent: true
     cmds:
-      - echo 'creating the k3s lxd profile on the host'
-      - ansible-playbook -i {{.INVENTORY}} playbooks/k3s-lxd-containers.yml
+      - echo 'creating the k3s lxd containers on the host'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/kmachine/k3s-lxd-containers.yml
 
   k3s-lxd-profile:
     desc: Create k3s lxd profile on the host
     silent: true
     cmds:
       - echo 'creating the k3s lxd profile on the host'
-      - ansible-playbook -i {{.INVENTORY}} playbooks/k3s-lxd-profile.yml
+      - ansible-playbook -i {{.INVENTORY}} playbooks/kmachine/k3s-lxd-profile.yml
+
+  prepare-containers:
+    desc: Run base roles on all containers
+    silent: true
+    cmds:
+      - echo 'running base playbook on containers'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/knodes/base.yml
 
   base:
     desc: Generate SSH keys for key based authentication
     silent: true
     cmds:
       - echo 'copying jump keys to vagrant server'
-      - ansible-playbook -i {{.INVENTORY}} playbooks/prepare-lxd.yml
+      - ansible-playbook -i {{.INVENTORY}} playbooks/kmachine/prepare-lxd.yml
       # - vagrant scp .ssh/vagrant_id_rsa default:/home/vagrant/.ssh/id_rsa
       # - vagrant scp .ssh/vagrant_id_rsa.pub default:/home/vagrant/.ssh/id_rsa.pub
 

@@ -1,5 +1,6 @@
 - hosts:
     - k3s-master
+    - k3s-worker
   tasks:
   - name: Update all packages to the latest version
     apt:
@@ -12,3 +13,39 @@
         - openssh-server
       update_cache: yes
       state: latest
+
+  - name: Make sure we have a 'k3s' group
+    group:
+      name: k3s
+      state: present
+
+  - name: Allow 'k3s' group to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%k3s'
+      line: '%k3s ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+
+  - name: Add the user 'k3s' with a bash shell, appending the group to the user's groups
+    user:
+      name: k3s
+      shell: /bin/bash
+      groups: k3s
+      append: yes
+      createhome: yes
+      home: /home/k3s
+
+  - name: Set authorized key taken from file
+    authorized_key:
+      user: root
+      state: present
+      key: "{{ lookup('file', '../../.ssh/vagrant_id_rsa.pub') }}"
+
+  - name: Set authorized key taken from file
+    authorized_key:
+      user: k3s
+      state: present
+      path:  /home/k3s/authorized_keys
+      key: "{{ lookup('file', '../../.ssh/vagrant_id_rsa.pub') }}"
+
