@@ -1,7 +1,6 @@
 # https://taskfile.dev
 
 version: '2'
-
 vars:
   INVENTORY: hosts.yml
 
@@ -35,8 +34,8 @@ tasks:
     desc: Add vagrant user to the lxd group
     silent: true
     cmds:
-      - echo 'copying jump keys to vagrant server'
-      - ansible-playbook -i {{.INVENTORY}} playbooks/prepare-lxd-users.yml
+      - echo 'Adding vagrant user to lxd group'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/kmachine/prepare-lxd-users.yml
 
   k3s-lxd-containers:
     desc: Create k3s lxd profile on the host

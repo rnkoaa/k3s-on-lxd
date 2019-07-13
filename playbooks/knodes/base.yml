@@ -8,7 +8,6 @@
   - name: "run apt update in container" 
     apt:
       pkg:
-        - vim
         - unzip
         - openssh-server
       update_cache: yes

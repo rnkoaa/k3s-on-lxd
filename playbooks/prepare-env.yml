@@ -5,6 +5,4 @@
   roles:
     - rnkoaa.base
     - geerlingguy.ntp
-    # - rnkoaa.lockdown
-  # tasks:
 
