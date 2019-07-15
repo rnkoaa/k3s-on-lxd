@@ -1,0 +1,9 @@
+- hosts: "{{ m_hosts | default('knodes') }}"
+  become: yes
+  vars:
+    is_master: "'{{ hostvars[inventory_hostname]['cluster_role']|lower }}' == 'master'"
+    is_worker: "'{{ hostvars[inventory_hostname]['cluster_role']|lower }}' == 'worker'"
+  tasks:
+  roles:
+    - rnkoaa.k3s
+  tags: [ installation ]

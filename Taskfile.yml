@@ -58,6 +58,13 @@ tasks:
       - echo 'running base playbook on containers'
       - ansible-playbook -i {{.INVENTORY}} playbooks/knodes/base.yml
 
+  deploy-k3s:
+    desc: Run k3s role on all containers to deploy k3s cluster
+    silent: true
+    cmds:
+      - echo 'running base playbook on containers'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/knodes/k3s.yml
+
   base:
     desc: Generate SSH keys for key based authentication
     silent: true

@@ -4,5 +4,5 @@
 
 .vault-pass
 master-token
-rnkoaa.k3s/files/k3s*
-rnkoaa.k3s/files/master-token
+roles/rnkoaa.k3s/files/k3s*
+roles/rnkoaa.k3s/files/master-token

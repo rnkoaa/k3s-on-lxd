@@ -42,6 +42,7 @@ default_timezone: America/Chicago
 ntp_timezone: "{{ default_timezone }}"
 
 k3s_version: v0.6.1
+k3s_version: v0.5.0
 systemd_dir: /etc/systemd/system
 
 k3s_flannel_deploy: no

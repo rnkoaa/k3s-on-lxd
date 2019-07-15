@@ -10,9 +10,9 @@ flannel_iface_key: ansible_{{ k3s_flannel_iface }}
 public_host_ipv4: "{{hostvars[inventory_hostname][flannel_iface_key]['ipv4']['address']}}"
 # public_ip_address: "private_host_ipv4: "{{ 'ansible_'+private_iface['ipv4']['address'] }}""
 
-k3s_release_base_url: https://github.com/rancher/k3s/releases/download 
+k3s_release_base_url: https://github.com/rancher/k3s/releases/download
 k3s_x86_64_checksum_file_url: "{{ k3s_release_base_url }}/{{ k3s_version }}/sha256sum-amd64.txt"
-k3s_checksum_dest: "{{ role_path }}/files/k3s_{{ k3s_version }}_SHA256SUMS }}"
+k3s_checksum_dest: "{{ role_path }}/files/k3s_{{ k3s_version }}_SHA256SUMS"
 k3s_bin_url: "{{ k3s_release_base_url }}/{{ k3s_version }}/k3s"
 k3s_pkg: k3s
 k3s_bin_dir: /usr/local/bin
