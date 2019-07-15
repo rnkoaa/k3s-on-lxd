@@ -1,12 +1,15 @@
-- hosts:
-    - k3s-master
-    - k3s-worker
-  tasks:
-  - name: Update all packages to the latest version
-    apt:
-      upgrade: dist
+- hosts: "{{ m_hosts | default('knodes')}}"
 
-  - name: "run apt update in container" 
+  roles:
+    - rnkoaa.base
+    - geerlingguy.ntp
+
+  tasks:
+  # - name: Update all packages to the latest version
+  #   apt:
+  #     upgrade: dist
+
+  - name: "run apt update in container"
     apt:
       pkg:
         - unzip
@@ -48,4 +51,3 @@
       state: present
       path:  /home/k3s/authorized_keys
       key: "{{ lookup('file', '../../.ssh/vagrant_id_rsa.pub') }}"
-

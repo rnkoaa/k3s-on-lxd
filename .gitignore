@@ -3,4 +3,6 @@
 **/*.log
 
 .vault-pass
-
+master-token
+rnkoaa.k3s/files/k3s*
+rnkoaa.k3s/files/master-token
