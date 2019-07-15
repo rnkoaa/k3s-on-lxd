@@ -1,0 +1,54 @@
+---
+all_nodes:
+  - {ip: '10.142.231.80', name: 'k3s-master', fqdn: 'k3s-master'}
+  - {ip: '10.142.231.218', name: 'k3s-worker', fqdn: 'k3s-worker'}
+
+ansible_python_interpreter: /usr/bin/python3
+ansible_user: root
+
+basic_apps:
+  - curl
+  - mtr-tiny
+  # - bridge-utils
+  - socat
+  - jq
+  - dnsutils
+  - build-essential
+  - ntp
+  - acl
+  - htop
+  - httpie
+  - vim
+  - wget
+  - dirmngr
+  - apt-transport-https
+  - ca-certificates
+  - software-properties-common
+  - libpq-dev
+  - python-dev
+  - python-pip
+  - python-pycurl
+  - supervisor
+  - unzip
+  - openssl
+  - libssl-dev
+  - libssl-doc
+
+  # for nfs mounting and unmounting.
+  - nfs-common
+
+ntp_enabled: true
+default_timezone: America/Chicago
+ntp_timezone: "{{ default_timezone }}"
+
+k3s_version: v0.6.1
+systemd_dir: /etc/systemd/system
+
+k3s_flannel_deploy: no
+k3s_traefik_deploy: no
+k3s_flannel_iface: eth0
+k3s_flannel_iface_key: ansible_{{ flannel_iface }}
+# master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}"
+master_ip: 10.142.231.80
+
+# ---

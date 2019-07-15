@@ -1,0 +1,31 @@
+---
+- hosts: "{{ m_host | default('kmachine') }}"
+  become: yes
+  vars:
+     vagrant_public_key: "{{ lookup('file', '../.ssh/vagrant_id_rsa.pub') }}"
+
+  tasks:
+    - name: Create k3s profile for creating lxd containers
+      lxd_profile:
+        state: present
+        name: k3s
+        config:
+          limits.cpu: "2"
+          limits.memory: "2GB"
+          limits.memory.swap: "false"
+          security.privileged: "true"
+          security.nesting: "true"
+          linux.kernel_modules: xt_conntrack,ip_tables,ip6_tables,netlink_diag,nf_nat,overlay 
+          raw.lxc: "lxc.apparmor.profile=unconfined\nlxc.cap.drop= \nlxc.cgroup.devices.allow=a\nlxc.mount.auto=proc:rw
+    sys:rw"
+        description: k3s profile for creating k3s containers
+        devices:
+          eth0:
+            name: eth0
+            nictype: bridged
+            parent: br0
+            type: nic
+          root:
+            path: /
+            pool: k3s
+            type: disk
