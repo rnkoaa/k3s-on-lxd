@@ -1,5 +1,6 @@
 ---
 # defaults file for roles/rnkoaa.k3s
+k3s_env_type: vm
 k3s_version: v0.5.0
 k3s_flannel_iface: eth1
 k3s_flannel_deploy: no

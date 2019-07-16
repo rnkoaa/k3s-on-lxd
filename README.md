@@ -33,3 +33,5 @@ On User machine
 - Master not starting due to overlay Issues [similar issue here](https://github.com/docker/for-linux/issues/475)
 
 - https://github.com/rancher/k3s/blob/master/k3s.service
+- https://angristan.xyz/lxc-zfs-pool-lxd/
+

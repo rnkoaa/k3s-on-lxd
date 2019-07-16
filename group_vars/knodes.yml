@@ -41,14 +41,15 @@ ntp_enabled: true
 default_timezone: America/Chicago
 ntp_timezone: "{{ default_timezone }}"
 
-k3s_version: v0.6.1
+# k3s_version: v0.6.1
 k3s_version: v0.5.0
 systemd_dir: /etc/systemd/system
 
+k3s_env_type: lxd
 k3s_flannel_deploy: no
 k3s_traefik_deploy: no
 k3s_flannel_iface: eth0
-k3s_flannel_iface_key: ansible_{{ flannel_iface }}
+k3s_flannel_iface_key: ansible_{{ k3s_flannel_iface }}
 # master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}"
 master_ip: 10.142.231.80
 
