@@ -49,7 +49,7 @@ tasks:
     silent: true
     cmds:
       - echo 'creating the k3s lxd profile on the host'
-      - ansible-playbook -i {{.INVENTORY}} playbooks/kmachine/k3s-lxd-profile.yml
+      - ansible-playbook -i {{.INVENTORY}} playbooks/kmachine/k3s-profile.yml
 
   prepare-containers:
     desc: Run base roles on all containers

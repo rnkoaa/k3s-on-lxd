@@ -2,7 +2,9 @@
 - hosts: "{{ m_host | default('kmachine') }}"
   become: yes
   
-  roles:
-    - rnkoaa.base
-    - geerlingguy.ntp
+  tasks:
+    - debug: var=ansible_default_ipv4.address
+  # roles:
+  #   - rnkoaa.base
+  #   - geerlingguy.ntp
 

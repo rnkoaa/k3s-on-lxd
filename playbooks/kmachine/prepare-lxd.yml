@@ -2,9 +2,12 @@
 - hosts: "{{ m_host | default('kmachine') }}"
   become: yes
   
+  # tasks:
+    # - debug: var="{{  hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    # - debug: var=ansible_enp0s8.ipv4.address
+    # - debug: var=ansible_all_ipv4_addresses
+    # - debug: var=ansible_default_ipv4.address
   roles:
     - rnkoaa.base
     - geerlingguy.ntp
-    # - rnkoaa.lockdown
-  # tasks:
 

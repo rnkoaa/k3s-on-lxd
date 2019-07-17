@@ -3,7 +3,12 @@
   vars:
     is_master: "'{{ hostvars[inventory_hostname]['cluster_role']|lower }}' == 'master'"
     is_worker: "'{{ hostvars[inventory_hostname]['cluster_role']|lower }}' == 'worker'"
-  tasks:
+
+  pre_tasks:
+  - name: "read the master token and set it as fact"
+    set_fact:
+      master_ip: "{{ hostvars['k3s-master']['ansible_eth0']['ipv4']['address'] }}"
+
   roles:
     - rnkoaa.k3s
   tags: [ installation ]

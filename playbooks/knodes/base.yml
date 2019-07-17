@@ -1,14 +1,15 @@
 - hosts: "{{ m_hosts | default('knodes')}}"
 
-  roles:
-    - rnkoaa.base
-    - geerlingguy.ntp
+  pre_tasks:
+  - name: Update all packages to the latest version
+    apt:
+      upgrade: dist
+
+  - name: "read the master token and set it as fact"
+    set_fact:
+      master_ip: "{{ hostvars['k3s-master']['ansible_eth0']['ipv4']['address'] }}"
 
   tasks:
-  # - name: Update all packages to the latest version
-  #   apt:
-  #     upgrade: dist
-
   - name: "run apt update in container"
     apt:
       pkg:
@@ -51,3 +52,7 @@
       state: present
       path:  /home/k3s/authorized_keys
       key: "{{ lookup('file', '../../.ssh/vagrant_id_rsa.pub') }}"
+
+  roles:
+    - rnkoaa.base
+    - geerlingguy.ntp
