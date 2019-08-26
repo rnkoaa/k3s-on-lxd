@@ -7,6 +7,7 @@
 * `task ansible-test`
 * `task copy-ssh-jump-keys`
 * `task base`
+* `task lockdown`
 * `task prepare-lxd-users`
 * Go to the server node and init lxd
 

@@ -23,6 +23,13 @@ tasks:
       - mkdir -p .ssh
       - ssh-keygen -t rsa -b 4096 -C "vagrant@vagrant.com" -N "" -f .ssh/vagrant_id_rsa
 
+  lockdown:
+    desc: lockdown instance
+    silent: true
+    cmds:
+      - echo 'locking down instances'
+      - ansible-playbook -i {{.INVENTORY}} playbooks/lockdown.yml
+
   copy-ssh-jump-keys:
     desc: Generate SSH keys for key based authentication
     silent: true

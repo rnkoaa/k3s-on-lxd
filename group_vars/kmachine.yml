@@ -1,3 +1,9 @@
 ---
 all_nodes:
   - {ip: '192.168.33.10', name: 'kmachine', fqdn: 'kmachine'}
+# defaults file for rnkoaa.lockdown
+ubuntu_common_ssh_port: 22
+ubuntu_common_required_packages:
+  - ufw
+  - fail2ban
+  - unattended-upgrades

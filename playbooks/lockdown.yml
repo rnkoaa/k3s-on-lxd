@@ -1,0 +1,74 @@
+---
+- hosts: "{{ m_host | default('kmachine') }}"
+  become: true
+  vars:
+    - ubuntu_common_ssh_port: 22
+    - lxc_port: 8443
+    - ubuntu_common_required_packages:
+      - ufw
+      - fail2ban
+      - unattended-upgrades
+
+  tasks:
+    # tasks file for rnkoaa.lockdown
+    - name: Install required packages
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: latest
+      loop: "{{ ubuntu_common_required_packages }}"
+
+    - name: Adjust APT update intervals
+      copy: src=apt_periodic dest=/etc/apt/apt.conf.d/10periodic
+
+    # first disable ipv6
+    - name: disable ipv6 for ufw
+      lineinfile: dest=/etc/default/ufw
+                  regexp="^IPV6"
+                  line="IPV6=no"
+                  state=present
+      notify: restart ufw
+
+    - name: Setup ufw
+      ufw: 
+        state: enabled
+        policy: allow
+
+    - name: Setup ufw logging
+      ufw: 
+        logging: on
+
+    - name: Allow lxc traffic
+      ufw: 
+        rule: allow 
+        port: "{{ lxc_port }}" 
+
+    - name: Allow ssh traffic
+      ufw: 
+        rule: allow 
+        port: "{{ ubuntu_common_ssh_port }}" 
+        proto: tcp
+        
+    - name: disallow all other ports ufw
+      ufw: 
+        state: enabled
+        policy: deny
+
+# - name: Change ssh port
+#   lineinfile: dest=/etc/ssh/sshd_config
+#               regexp="^Port\s"
+#               line="Port {{ ubuntu_common_ssh_port }}"
+#               state=present
+#   notify: Restart ssh
+
+# - name: Disallow root SSH access
+#   lineinfile: dest=/etc/ssh/sshd_config
+#               regexp="^PermitRootLogin"
+#               line="PermitRootLogin no"
+#               state=present
+#   notify: Restart ssh- 
+
+  handlers:
+    # handlers file for rnkoaa.lockdown
+    - name: restart ufw
+      service: name=ufw state=restarted
